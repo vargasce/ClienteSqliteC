@@ -38,19 +38,27 @@ int InitSystem();
 char *insertString(char** original, char* insert, int pos);
 int InitDataBase(char *nameDB);
 int Create_DB(char *nameDB);
+void InserNameDBtoSystem(char *nameDB);
+
+//SIN USO
+void clearTerminal();
+char *insertNameDB();
+
+sqlite3 *db = NULL;
+char *conectionName = NULL;
 
 int Create_Data_Base(char *nameDB){
 	
-	InitSystem();
-	InitDataBase(nameDB);
-	Create_DB(nameDB);
+	if( InitSystem() != ERROR){
+		InitDataBase(nameDB);
+		Create_DB(nameDB);
+	}
 	
 	return SUCCESS;
 }
 
 int InitSystem(){
-	
-	sqlite3 *db;
+		
 	char *err_msg;
 	
 	int rc = sqlite3_open(SYSTEM_TABLE, &db);
@@ -67,20 +75,18 @@ int InitSystem(){
 	rc = sqlite3_exec(db, sqlAdd, 0, 0, &err_msg);
 	
 	if(rc != SQLITE_OK){
-		fprintf(stderr, "Failed to create table\n");
-        fprintf(stderr, "SQL error: %s\n", err_msg);
+		//fprintf(stderr, "Failed to create table\n");
+        //fprintf(stderr, "SQL error: %s\n", err_msg);
         sqlite3_free(err_msg);
 	}
 	
-	sqlite3_close(db);
+	CloseConection();
 		
 	return SUCCESS;
 }
 
 int InitDataBase(char *nameDB){
-	
-	sqlite3 *db;
-	char *err_msg;
+
 	int existNameBD = -1;
 	sqlite3_stmt *res;
 	
@@ -92,51 +98,39 @@ int InitDataBase(char *nameDB){
         return ERROR;
 	}
 	
-	rc = sqlite3_prepare_v2(db, "SELECT Name FROM Tables;", -1, &res, 0);    
+	char *sqlExisteDB = "SELECT Name FROM Tables WHERE Name = '';";
+	sqlExisteDB = insertString(&sqlExisteDB, nameDB, 38);	
+	
+	rc = sqlite3_prepare_v2(db, sqlExisteDB, -1, &res, 0);    
     
     if (rc != SQLITE_OK) {        
-        fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
+        fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(db));        
+        CloseConection();
         sqlite3_free(res);
-        return 1;
+        return ERROR;
     }    
     
     rc = sqlite3_step(res);
     
-    if (rc == SQLITE_ROW) {        
-        char *result = (char*)sqlite3_column_text(res, 0);
+    if (rc == SQLITE_ROW) {   
+        char *result = (char*)sqlite3_column_text(res, 0);        
         if(strcmp(result,nameDB) == 0){
 			existNameBD = 1;
 		}
     }
     
     sqlite3_finalize(res);
+    
 	if(existNameBD != 1){
-		char *sql = "INSERT INTO (Name) VALUES ('');";
-		sql = insertString(&sql, NAMETABLES, 12);
-		sql = insertString(&sql, nameDB, 28 + strlen(NAMETABLES));
-	
-		rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
-		
-		if(rc != SQLITE_OK){
-			printf("%s\n", sql);
-			fprintf(stderr, "Failed to Insert table\n");
-			fprintf(stderr, "SQL error: %s\n", err_msg);
-			sqlite3_free(err_msg);
-		}
-		
-		int last_id = sqlite3_last_insert_rowid(db);
-		printf("The last Id of the inserted row is %d\n", last_id);
+		InserNameDBtoSystem(nameDB);
 	}
 	    
-	sqlite3_close(db);
+	CloseConection();
 		
 	return SUCCESS;
 }
 
-int Create_DB(char *nameDB){
-	
-	sqlite3 *db;
+int Create_DB(char *nameDB){	
 	
 	int rc = sqlite3_open(nameDB, &db);
 	
@@ -146,9 +140,15 @@ int Create_DB(char *nameDB){
         return ERROR;
 	}
 	
-	sqlite3_close(db);
+	CloseConection();
 	
 	return SUCCESS;
+}
+
+void CloseConection(){
+	sqlite3_close(db);
+	conectionName = NULL;
+	db = NULL;
 }
 
 /**
@@ -180,3 +180,45 @@ char *insertString(char** original, char* insert, int pos){
 	return temp;
 }
 
+void InserNameDBtoSystem(char *nameDB){
+		
+	char *err_msg;
+	char *sql = "INSERT INTO (Name) VALUES ('');";
+	sql = insertString(&sql, NAMETABLES, 12);
+	sql = insertString(&sql, nameDB, 28 + strlen(NAMETABLES));
+
+	int rc = sqlite3_exec(db, sql, 0, 0, &err_msg);
+	
+	if(rc != SQLITE_OK){
+		printf("%s\n", sql);
+		fprintf(stderr, "Failed to Insert table\n");
+		fprintf(stderr, "SQL error: %s\n", err_msg);
+		sqlite3_free(err_msg);
+	}
+	
+	int last_id = sqlite3_last_insert_rowid(db);
+	printf("The last Id of the inserted row is %d\n", last_id);
+}
+
+void clearTerminal() {
+    if (system("clear") == -1) {
+        perror("Error al limpiar la terminal");
+        exit(EXIT_FAILURE);
+    }
+}
+
+char *insertNameDB(){	
+	
+	char *buffer = (char *) malloc(20);
+	char *db = ".db\0";
+	
+	if (buffer==NULL)return NULL;
+		
+	getchar();
+	memset(buffer,0,20);	
+	fgets(buffer,15,stdin);
+	buffer[strlen(buffer) - 1] = ' ';
+	strcat(buffer,db);
+	
+	return buffer;
+}

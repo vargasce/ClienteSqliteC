@@ -30,13 +30,11 @@
 #include "ClientSlqliteinC.h"
 
 void sigintHandler(int signal);
-void clearTerminal();
-char *insertNameDB();
 
 int main(int argc, char **argv)
 {	
 	signal(SIGINT, sigintHandler);
-	Create_Data_Base("business.db");
+	Create_Data_Base("identity.db");
 	getchar();
 	return 0;
 }
@@ -46,25 +44,4 @@ void sigintHandler(int signal){
 	exit(EXIT_FAILURE);
 }
 
-void clearTerminal() {
-    if (system("clear") == -1) {
-        perror("Error al limpiar la terminal");
-        exit(EXIT_FAILURE);
-    }
-}
 
-char *insertNameDB(){	
-	
-	char *buffer = (char *) malloc(20);
-	char *db = ".db\0";
-	
-	if (buffer==NULL)return NULL;
-		
-	getchar();
-	memset(buffer,0,20);	
-	fgets(buffer,15,stdin);
-	buffer[strlen(buffer) - 1] = ' ';
-	strcat(buffer,db);
-	
-	return buffer;
-}

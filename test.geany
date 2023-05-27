@@ -29,10 +29,10 @@ long_line_column=72
 
 [files]
 current_page=1
-FILE_NAME_0=1096;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2Fmain.c;0;4
-FILE_NAME_1=1204;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.c;0;4
-FILE_NAME_2=207;C++;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.h;0;4
-FILE_NAME_3=1309177;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2Fsqlite3.c;0;4
+FILE_NAME_0=1046;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2Fmain.c;0;4
+FILE_NAME_1=4257;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.c;0;4
+FILE_NAME_2=156;C++;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.h;0;4
+FILE_NAME_3=30138;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2Fsqlite3.c;0;4
 
 [VTE]
 last_dir=/home/kali
