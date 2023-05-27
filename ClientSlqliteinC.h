@@ -2,11 +2,18 @@
 #include <sqlite3.h>
 
 typedef struct {
+	int argc;  		  //number columns
+	char **argv;      //fields in the row.
+	char **azColName; //column names
+} Payload;
+
+typedef struct {
 	int success;
-	sqlite3_stmt *payload;
-	char *menssage;
+	Payload *payload;
+	char *message;
 } response_query_sqlite;
 
 int Create_Data_Base(char *nameDB);
 void CloseConection();
-response_query_sqlite select_request(char *body);
+int ListDataBase();
+response_query_sqlite *Select_Response();

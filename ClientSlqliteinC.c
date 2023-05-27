@@ -39,6 +39,8 @@ char *insertString(char** original, char* insert, int pos);
 int InitDataBase(char *nameDB);
 int Create_DB(char *nameDB);
 void InserNameDBtoSystem(char *nameDB);
+int callback(void *NotUsed, int argc, char **argv, char **azColName);
+char** copyStringArray(char** array, int size);
 
 //SIN USO
 void clearTerminal();
@@ -46,6 +48,7 @@ char *insertNameDB();
 
 sqlite3 *db = NULL;
 char *conectionName = NULL;
+response_query_sqlite *RESPONSE_QUERY = NULL;
 
 int Create_Data_Base(char *nameDB){
 	
@@ -145,6 +148,54 @@ int Create_DB(char *nameDB){
 	return SUCCESS;
 }
 
+int ListDataBase(){
+	
+	int rc = sqlite3_open(SYSTEM_TABLE, &db);
+	char *err_msg;
+	
+	if(rc != SQLITE_OK){
+		fprintf(stderr, "Cannot open database: %s\n",sqlite3_errmsg(db));
+        sqlite3_close(db);        
+        return ERROR;
+	}
+	
+	char *sql = "SELECT * FROM Tables;";
+        
+    rc = sqlite3_exec(db, sql, callback, 0, &err_msg);
+    
+    if (rc != SQLITE_OK ) {        
+        fprintf(stderr, "Failed to select data\n");
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+		CloseConection();        
+        return 1;
+    } 
+    
+	CloseConection();
+	
+	return 0;
+}
+
+int callback(void *NotUsed, int argc, char **argv, char **azColName){
+	
+	NotUsed = 0;
+    RESPONSE_QUERY = (response_query_sqlite*) malloc(sizeof(response_query_sqlite));
+    RESPONSE_QUERY->payload = (Payload *) malloc(sizeof(Payload));
+    RESPONSE_QUERY->payload->argv = (char **) malloc(sizeof(argv));
+    RESPONSE_QUERY->payload->azColName = (char **) malloc(sizeof(azColName));
+    
+    RESPONSE_QUERY->message = NULL;
+    RESPONSE_QUERY->success = SUCCESS;
+    RESPONSE_QUERY->payload->argc = argc;
+    RESPONSE_QUERY->payload->argv = copyStringArray(argv, argc);
+    RESPONSE_QUERY->payload->azColName = copyStringArray(azColName, argc);
+        
+    return 0;
+}
+
+response_query_sqlite *Select_Response(){	
+	return RESPONSE_QUERY;
+}
+
 void CloseConection(){
 	sqlite3_close(db);
 	conectionName = NULL;
@@ -198,6 +249,7 @@ void InserNameDBtoSystem(char *nameDB){
 	
 	int last_id = sqlite3_last_insert_rowid(db);
 	printf("The last Id of the inserted row is %d\n", last_id);
+
 }
 
 void clearTerminal() {
@@ -221,4 +273,14 @@ char *insertNameDB(){
 	strcat(buffer,db);
 	
 	return buffer;
+}
+
+
+// Función para copiar una matriz de cadenas de caracteres
+char** copyStringArray(char** array, int size) {
+    char** copy = (char**)malloc(size * sizeof(char*));
+    for (int i = 0; i < size; i++) {
+        copy[i] = strdup(array[i]);
+    }
+    return copy;
 }

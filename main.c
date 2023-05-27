@@ -35,6 +35,17 @@ int main(int argc, char **argv)
 {	
 	signal(SIGINT, sigintHandler);
 	Create_Data_Base("identity.db");
+	ListDataBase();
+	response_query_sqlite *response = Select_Response();	
+	
+	if(response->success == 1){
+		printf(" Count columns : %d\n",response->payload->argc);			
+		
+		for (int i = 0; i < response->payload->argc; i++) {
+			printf("%s = %s\n", response->payload->azColName[i], response->payload->argv[i] ? response->payload->argv[i] : "NULL");
+		}
+		
+	}
 	getchar();
 	return 0;
 }
