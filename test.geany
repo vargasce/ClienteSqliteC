@@ -29,9 +29,9 @@ long_line_column=72
 
 [files]
 current_page=0
-FILE_NAME_0=1404;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2Fmain.c;0;4
-FILE_NAME_1=4767;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.c;0;4
-FILE_NAME_2=121;C++;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.h;0;4
+FILE_NAME_0=1529;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2Fmain.c;0;4
+FILE_NAME_1=5710;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.c;0;4
+FILE_NAME_2=324;C++;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2FClientSlqliteinC.h;0;4
 FILE_NAME_3=30126;C;0;EUTF-8;1;1;0;%2Fhome%2Fkali%2FDocuments%2FProyect%2FProyectC%2FTest%2Fsqlite3.c;0;4
 
 [VTE]

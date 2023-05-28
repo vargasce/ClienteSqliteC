@@ -30,6 +30,7 @@
 #include "ClientSlqliteinC.h"
 
 #define ERROR -1
+#define ERROR_CONECTION_NAME_INVALID 2
 #define SUCCESS 1
 #define SYSTEM_TABLE "system.db"
 #define NAMETABLES "Tables"
@@ -202,6 +203,52 @@ void CloseConection(){
 	db = NULL;
 }
 
+int ConectionDB(char *nameDB){
+		
+	int existNameBD = -1;
+	sqlite3_stmt *res;	
+	int rc = sqlite3_open(SYSTEM_TABLE, &db);
+	
+	char *sqlExisteDB = "SELECT Name FROM Tables WHERE Name = '';";
+	sqlExisteDB = insertString(&sqlExisteDB, nameDB, 38);		
+	rc = sqlite3_prepare_v2(db, sqlExisteDB, -1, &res, 0);    
+    
+    if (rc != SQLITE_OK) {        
+        fprintf(stderr, "Failed to fetch data: %s\n", sqlite3_errmsg(db));        
+        CloseConection();
+        sqlite3_free(res);
+        return ERROR;
+    }    
+    
+    rc = sqlite3_step(res);
+    
+    if (rc == SQLITE_ROW) {   
+        char *result = (char*)sqlite3_column_text(res, 0);        
+        if(strcmp(result,nameDB) == 0){
+			existNameBD = 1;
+		}
+    }
+    
+    sqlite3_finalize(res);
+    CloseConection();
+    
+    if(existNameBD != 1){
+		return ERROR;	
+	}
+	
+	rc = sqlite3_open(nameDB, &db);
+	conectionName = (char *) malloc(strlen(nameDB));
+	strcpy(conectionName, nameDB);
+	
+	if(rc != SQLITE_OK){
+		fprintf(stderr, "Cannot open database: %s\n",sqlite3_errmsg(db));
+		CloseConection();      
+		return ERROR;
+	}
+	
+	return SUCCESS;
+}
+
 /**
  *	Tomando como inicio un puntero char, inserta un string
  *  en la posicion indicada.
@@ -275,12 +322,18 @@ char *insertNameDB(){
 	return buffer;
 }
 
-
-// Función para copiar una matriz de cadenas de caracteres
 char** copyStringArray(char** array, int size) {
     char** copy = (char**)malloc(size * sizeof(char*));
     for (int i = 0; i < size; i++) {
         copy[i] = strdup(array[i]);
     }
     return copy;
+}
+
+void Free_Response_Query(response_query_sqlite *response){	
+    response->payload->argc = -9;    
+    response->payload->argv = NULL;
+    response->payload->azColName = NULL;    
+    free(response->payload);
+	free(response);
 }

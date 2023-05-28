@@ -46,6 +46,15 @@ int main(int argc, char **argv)
 		}
 		
 	}
+	
+	Free_Response_Query(response);
+	
+	if( ConectionDB("identity.db") != 1){
+		printf("Error\n");
+	}
+	
+	CloseConection();
+	
 	getchar();
 	return 0;
 }
